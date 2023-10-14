@@ -54,7 +54,7 @@ public class RekognitionObjectApplication {
 
 			// Create a new connection factory for Amazon SQS
 			SQSConnectionFactory connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
-					AmazonSQSClientBuilder.defaultClient());
+					AmazonSQSClientBuilder.standard().withRegion(Regions.US_EAST_1));
 
 			// Establish a connection to Amazon SQS
 			SQSConnection connection = connectionFactory.createConnection();
