@@ -28,7 +28,8 @@ class QueueListener implements MessageListener {
 	public void onMessage(Message message) {
 
 		try {
-			Regions clientRegion = Regions.US_EAST_1;
+			// Regions clientRegion = Regions.US_EAST_1;
+			String clientRegion = "us-east-1d";
 			String bucketName = "awsobjecttextbucket";
 
 			ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName);

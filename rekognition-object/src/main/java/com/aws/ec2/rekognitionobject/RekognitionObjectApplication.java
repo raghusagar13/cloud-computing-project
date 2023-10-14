@@ -43,7 +43,8 @@ public class RekognitionObjectApplication {
 	public static void main(String[] args) throws IOException, JMSException, InterruptedException {
 		SpringApplication.run(RekognitionObjectApplication.class, args);
 
-		Regions clientRegion = Regions.US_EAST_1;
+		// Regions clientRegion = Regions.US_EAST_1;
+		String clientRegion = "us-east-1d";
 		String bucketName = "awsobjecttextbucket";
 
 		try {
