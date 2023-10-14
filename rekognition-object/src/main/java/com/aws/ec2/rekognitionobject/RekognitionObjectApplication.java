@@ -62,22 +62,22 @@ public class RekognitionObjectApplication {
 			// Access the Amazon SQS client through a wrapper
 			AmazonSQSMessagingClientWrapper client = connection.getWrappedAmazonSQSClient();
 
-			// Create an Amazon SQS FIFO queue named queue.fifo if it doesn't already exist
-			if (!client.queueExists("queue.fifo")) {
+			// Create an Amazon SQS FIFO queue named queue if it doesn't already exist
+			if (!client.queueExists("queue")) {
 				// Configure queue attributes for FIFO and content-based deduplication
 				Map<String, String> attributes = new HashMap<String, String>();
 				attributes.put("FifoQueue", "true");
 				attributes.put("ContentBasedDeduplication", "true");
 
 				// Create the queue with specified attributes
-				client.createQueue(new CreateQueueRequest().withQueueName("queue.fifo").withAttributes(attributes));
+				client.createQueue(new CreateQueueRequest().withQueueName("queue").withAttributes(attributes));
 			}
 
 			// Create a non-transacted session with AUTO_ACKNOWLEDGE mode for JMS
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 			// Create a queue identity and specify the queue name
-			Queue queue = session.createQueue("queue.fifo");
+			Queue queue = session.createQueue("queue");
 
 			// Create a producer to send messages to the 'MyQueue' FIFO queue
 			MessageProducer producer = session.createProducer(queue);
