@@ -1,5 +1,9 @@
 package com.aws.ec2.rekognitionobject;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -43,18 +47,24 @@ public class RekognitionObjectApplication {
 	public static void main(String[] args) throws IOException, JMSException, InterruptedException {
 		SpringApplication.run(RekognitionObjectApplication.class, args);
 
-	    Regions clientRegion = Regions.US_EAST_1;
-		String bucketName = "awsobjecttextbucket";
+		Regions clientRegion = Regions.US_EAST_2;
+		String bucketName = "reko-text-object";
+
+		AWSCredentials credentials = new BasicAWSCredentials(
+				"AKIA4OKLBQSLHNZMB35V",
+				"nlJzCF6VbxJfjrf5eBMYrhfRq/dKBkj0GoFnD2xE"
+		);
 
 		try {
 			// Initialize an Amazon S3 client to work with your S3 bucket
 			AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.withRegion(clientRegion)
 					.build();
 
 			// Create a new connection factory for Amazon SQS
 			SQSConnectionFactory connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
-					AmazonSQSClientBuilder.standard().withRegion(Regions.US_EAST_1));
+					AmazonSQSClientBuilder.standard().withRegion(Regions.US_EAST_2).withCredentials(new AWSStaticCredentialsProvider(credentials)));
 
 			// Establish a connection to Amazon SQS
 			SQSConnection connection = connectionFactory.createConnection();
@@ -62,22 +72,22 @@ public class RekognitionObjectApplication {
 			// Access the Amazon SQS client through a wrapper
 			AmazonSQSMessagingClientWrapper client = connection.getWrappedAmazonSQSClient();
 
-			// Create an Amazon SQS FIFO queue named queue if it doesn't already exist
-			if (!client.queueExists("queue")) {
+			// Create an Amazon SQS FIFO queue named MyQueue.fifo if it doesn't already exist
+			if (!client.queueExists("MyQueue.fifo")) {
 				// Configure queue attributes for FIFO and content-based deduplication
 				Map<String, String> attributes = new HashMap<String, String>();
 				attributes.put("FifoQueue", "true");
 				attributes.put("ContentBasedDeduplication", "true");
 
 				// Create the queue with specified attributes
-				client.createQueue(new CreateQueueRequest().withQueueName("queue").withAttributes(attributes));
+				client.createQueue(new CreateQueueRequest().withQueueName("MyQueue.fifo").withAttributes(attributes));
 			}
 
 			// Create a non-transacted session with AUTO_ACKNOWLEDGE mode for JMS
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 			// Create a queue identity and specify the queue name
-			Queue queue = session.createQueue("queue");
+			Queue queue = session.createQueue("MyQueue.fifo");
 
 			// Create a producer to send messages to the 'MyQueue' FIFO queue
 			MessageProducer producer = session.createProducer(queue);
@@ -93,10 +103,13 @@ public class RekognitionObjectApplication {
 				result = s3Client.listObjectsV2(req);
 				for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
 					String photo = objectSummary.getKey();
+					System.out.println(photo);
 
 					// Create an Amazon Rekognition client
-					AmazonRekognition rekognitionClient = AmazonRekognitionClientBuilder.defaultClient();
-
+					AmazonRekognition rekognitionClient = AmazonRekognitionClientBuilder.standard()
+							.withCredentials(new AWSStaticCredentialsProvider(credentials))
+							.withRegion(clientRegion)
+							.build();
 					// Prepare a request to detect labels in the image
 					DetectLabelsRequest request = new DetectLabelsRequest()
 							.withImage(new Image().withS3Object(new S3Object().withName(photo).withBucket(bucketName)))
@@ -112,6 +125,7 @@ public class RekognitionObjectApplication {
 						Hashtable<String, Integer> numbers = new Hashtable<String, Integer>();
 
 						for (Label label : labels) {
+							System.out.println(label);
 							// Check if the detected label is "Car" with confidence greater than 90
 							if (label.getName().equals("Car") && label.getConfidence() > 90) {
 								System.out.print("Detected labels for:  " + photo + " => ");
@@ -143,7 +157,5 @@ public class RekognitionObjectApplication {
 		} catch (SdkClientException e) {
 			e.printStackTrace();
 		}
-
 	}
-
 }

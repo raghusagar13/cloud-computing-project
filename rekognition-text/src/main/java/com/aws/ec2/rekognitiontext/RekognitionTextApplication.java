@@ -1,7 +1,8 @@
 package com.aws.ec2.rekognitiontext;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 
 import com.amazon.sqs.javamessaging.*;
 import com.amazonaws.AmazonServiceException;
@@ -20,25 +21,33 @@ import javax.jms.Queue;
 
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
-@SpringBootApplication
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 class QueueListener implements MessageListener {
+
+	AWSCredentials credentials = new BasicAWSCredentials(
+			"AKIA4OKLBQSLHNZMB35V",
+			"nlJzCF6VbxJfjrf5eBMYrhfRq/dKBkj0GoFnD2xE"
+	);
 
 	@Override
 	public void onMessage(Message message) {
 
 		try {
-			Regions clientRegion = Regions.US_EAST_1;
-			String bucketName = "awsobjecttextbucket";
+			Regions clientRegion = Regions.US_EAST_2;
+			String bucketName = "reko-text-object";
 
 			ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName);
 			ListObjectsV2Result result;
 
 			AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.withRegion(clientRegion)
 					.build();
 
 			AmazonRekognition rekognitionClient = AmazonRekognitionClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.withRegion(clientRegion)
 					.build();
 
@@ -78,16 +87,24 @@ class QueueListener implements MessageListener {
 		}
 	}
 }
+
+@SpringBootApplication
 public class RekognitionTextApplication {
+
+	static AWSCredentials credentials = new BasicAWSCredentials(
+			"AKIA4OKLBQSLHNZMB35V",
+			"nlJzCF6VbxJfjrf5eBMYrhfRq/dKBkj0GoFnD2xE"
+	);
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(RekognitionTextApplication.class, args);
 
-		Regions clientRegion = Regions.US_EAST_1;
+		Regions clientRegion = Regions.US_EAST_2;
 
 		try {
 			// Create an Amazon SQS client for the specified region
 			AmazonSQSClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.withRegion(clientRegion)
 					.build();
 
@@ -95,27 +112,29 @@ public class RekognitionTextApplication {
 			try {
 				// Create a new connection factory with all defaults (credentials and region set automatically)
 				SQSConnectionFactory connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
-						AmazonSQSClientBuilder.defaultClient());
+						AmazonSQSClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
+								.withRegion(clientRegion)
+								.build());
 
 				// Create a connection to Amazon SQS
 				SQSConnection connection = connectionFactory.createConnection();
 				// Get the wrapped Amazon SQS client
 				AmazonSQSMessagingClientWrapper client = connection.getWrappedAmazonSQSClient();
 
-				// Check if the queue named "queue.fifo" exists; if not, create it with specific attributes
-				if (!client.queueExists("queue.fifo")) {
+				// Check if the queue named "MyQueue.fifo" exists; if not, create it with specific attributes
+				if (!client.queueExists("MyQueue.fifo")) {
 					Map<String, String> attributes = new HashMap<String, String>();
 					attributes.put("FifoQueue", "true");
 					attributes.put("ContentBasedDeduplication", "true");
 					client.createQueue(
-							new CreateQueueRequest().withQueueName("queue.fifo").withAttributes(attributes));
+							new CreateQueueRequest().withQueueName("MyQueue.fifo").withAttributes(attributes));
 				}
 
 				// Create a JMS session
 				Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 				// Create a queue identity and specify the queue name
-				Queue queue = session.createQueue("queue.fifo");
+				Queue queue = session.createQueue("MyQueue.fifo");
 
 				// Create a JMS message consumer for the 'MyQueue'
 				MessageConsumer consumer = session.createConsumer(queue);
@@ -132,24 +151,26 @@ public class RekognitionTextApplication {
 			} catch (Exception e) {
 				System.out.println("Please run 'Instance-1'; the program will wait for the queue to have elements.");
 				SQSConnectionFactory connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),
-						AmazonSQSClientBuilder.defaultClient());
+						AmazonSQSClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials))
+						.withRegion(clientRegion)
+						.build());
 
 				// Create a connection to Amazon SQS
 				SQSConnection connection = connectionFactory.createConnection();
 				// Get the wrapped Amazon SQS client
 				AmazonSQSMessagingClientWrapper client = connection.getWrappedAmazonSQSClient();
 
-				// Check if the queue named "queue.fifo" exists; if not, create it with specific attributes
-				if (!client.queueExists("queue.fifo")) {
+				// Check if the queue named "MyQueue.fifo" exists; if not, create it with specific attributes
+				if (!client.queueExists("MyQueue.fifo")) {
 					Map<String, String> attributes = new HashMap<String, String>();
 					attributes.put("FifoQueue", "true");
 					attributes.put("ContentBasedDeduplication", "true");
 					client.createQueue(
-							new CreateQueueRequest().withQueueName("queue.fifo").withAttributes(attributes));
+							new CreateQueueRequest().withQueueName("MyQueue.fifo").withAttributes(attributes));
 
 					Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 					// Create a queue identity and specify the queue name to the session
-					Queue queue = session.createQueue("queue.fifo");
+					Queue queue = session.createQueue("MyQueue.fifo");
 
 					// Create a JMS message consumer for the 'MyQueue'
 					MessageConsumer consumer = session.createConsumer(queue);
