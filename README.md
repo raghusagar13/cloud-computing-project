@@ -15,7 +15,7 @@ This README provides step-by-step instructions for setting up a cloud environmen
 
 1.3. Create a new IAM group (e.g., "AppGroup").
 
-1.4. Add permissions to the group for S3, EC2, and SQS services.
+1.4. Add permissions to the group for S3, Rekognition, and SQS services.
 
 1.5. Create a new IAM user (e.g., "AppUser") and add the user to the "AppGroup" you created.
 
