@@ -46,8 +46,8 @@ This README provides step-by-step instructions for setting up a cloud environmen
 ## Application Console
 
 ### Object Rekognition
-[OBJ REKOGNITION](images/obj-reko.png)
+(images/obj-reko.png)
 
 ### text Rekognition
-[TEXT REKOGNITION](images/text-reko.png)
+(images/text-reko.png)
 
