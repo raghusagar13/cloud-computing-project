@@ -21,7 +21,7 @@ This README provides step-by-step instructions for setting up a cloud environmen
 
 1.6. Generate and securely store the access and secret access keys for "AppUser."
 
-## Step 2: Create an S3 Bucket and Upload Card Images
+## Step 2: Create an S3 Bucket and Upload Car Images
 
 2.1. Open your cloud provider's management console.
 
