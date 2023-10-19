@@ -6,7 +6,6 @@ This README provides step-by-step instructions for setting up a cloud environmen
 
 ## Prerequisites
 - You should have an active cloud provider account (e.g., AWS).
-- You should have the AWS CLI (Command Line Interface) installed.
 
 ## Step 1: Create a User Role with Group Rights
 
@@ -28,7 +27,7 @@ This README provides step-by-step instructions for setting up a cloud environmen
 
 2.2. Navigate to the Simple Storage Service (S3) dashboard.
 
-2.3. Create a new S3 bucket (e.g., "card-images-bucket").
+2.3. Create a new S3 bucket (e.g., "car-images-bucket").
 
 2.4. Configure the bucket with default permissions, keeping it private by default.
 
@@ -43,4 +42,12 @@ This README provides step-by-step instructions for setting up a cloud environmen
 3.3. Configure the application with the AWS credentials (access key and secret key) of "AppUser."
 
 3.4. Build and run the application according to the provided instructions.
+
+## Application Console
+
+### Object Rekognition
+[OBJ REKOGNITION](images/obj-reko.png)
+
+### text Rekognition
+[TEXT REKOGNITION](images/text-reko.png)
 
