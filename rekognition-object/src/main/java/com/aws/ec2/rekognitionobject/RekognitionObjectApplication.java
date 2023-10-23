@@ -36,8 +36,8 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 @SpringBootApplication
 public class RekognitionObjectApplication {
-	@Value("${BUCKET_NAME}")
-    private static String BUCKET_NAME;
+	
+    private static String BUCKET_NAME="njit-cs-643";
 
 	private final static String QUEUE_NAME = "Queue.fifo";
 

@@ -19,8 +19,7 @@ import java.util.List;
 public class QueueListener implements MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(QueueListener.class);
 
-    @Value("${BUCKET_NAME}")
-    private static String BUCKET_NAME;
+    private static String BUCKET_NAME="njit-cs-643";
 
 
     @Override
