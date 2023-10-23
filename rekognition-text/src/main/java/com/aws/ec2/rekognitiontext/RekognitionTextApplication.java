@@ -21,8 +21,8 @@ import java.util.Map;
 @SpringBootApplication
 public class RekognitionTextApplication {
 	private static final Logger logger = LoggerFactory.getLogger(RekognitionTextApplication.class);
-	@Value("${QUEUE_NAME}")
-	private static String QUEUE_NAME;
+	
+	private final static String QUEUE_NAME = "Queue.fifo";
 
 	public static void main(String[] args) throws JMSException {
 		SpringApplication.run(RekognitionTextApplication.class, args);

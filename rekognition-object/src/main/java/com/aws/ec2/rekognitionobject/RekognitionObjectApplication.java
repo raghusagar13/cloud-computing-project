@@ -39,8 +39,7 @@ public class RekognitionObjectApplication {
 	@Value("${BUCKET_NAME}")
     private static String BUCKET_NAME;
 
-	@Value("${QUEUE_NAME}")
-	private static String QUEUE_NAME;
+	private final static String QUEUE_NAME = "Queue.fifo";
 
 	private static final Logger logger = LoggerFactory.getLogger(RekognitionObjectApplication.class);
 
