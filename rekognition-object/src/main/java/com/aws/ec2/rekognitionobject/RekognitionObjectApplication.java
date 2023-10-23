@@ -39,7 +39,7 @@ public class RekognitionObjectApplication {
 	
     private static String BUCKET_NAME="njit-cs-643";
 
-	private final static String QUEUE_NAME = "Queue.fifo";
+	private final static String QUEUE_NAME = "MyQueue.fifo";
 
 	private static final Logger logger = LoggerFactory.getLogger(RekognitionObjectApplication.class);
 
