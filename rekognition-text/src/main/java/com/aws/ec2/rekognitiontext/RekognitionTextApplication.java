@@ -10,6 +10,7 @@ import com.aws.ec2.rekognitiontext.config.AWSConfig;
 import com.aws.ec2.rekognitiontext.service.QueueListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -20,7 +21,8 @@ import java.util.Map;
 @SpringBootApplication
 public class RekognitionTextApplication {
 	private static final Logger logger = LoggerFactory.getLogger(RekognitionTextApplication.class);
-	private static final String QUEUE_NAME = "Queue.fifo";
+	@Value("${QUEUE_NAME}")
+	private static String QUEUE_NAME;
 
 	public static void main(String[] args) throws JMSException {
 		SpringApplication.run(RekognitionTextApplication.class, args);

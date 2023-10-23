@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.aws.ec2.rekognitiontext.config.AWSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -18,7 +19,8 @@ import java.util.List;
 public class QueueListener implements MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(QueueListener.class);
 
-    private static final String BUCKET_NAME = "reko-text-object";
+    @Value("${BUCKET_NAME}")
+    private static String BUCKET_NAME;
 
 
     @Override
