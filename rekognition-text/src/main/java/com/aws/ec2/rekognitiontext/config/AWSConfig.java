@@ -30,6 +30,6 @@ public class AWSConfig {
     @Bean
     public SQSConnectionFactory sqsConnectionFactory() {
         return new SQSConnectionFactory(new ProviderConfiguration(),
-                AmazonSQSClientBuilder.defaultClient());
+                AmazonSQSClientBuilder.standard().withRegion(clientRegion).build());
     }
 }
